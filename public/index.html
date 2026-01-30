@@ -1,23 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gemini AI Chatbot</title>
+  <title>Gemini AI - Assistant Modern</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+    rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Marked.js for Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- Highlight.js for Code Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <div class="container">
-    <h1>Gemini AI Chatbot</h1>
-    <div id="chat-box" class="chat-box"></div>
-    <form id="chat-form">
-      <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" required />
-      <button type="submit">Send</button>
-    </form>
+  <div class="app-container">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">
+          <i data-lucide="bot"></i>
+        </div>
+        <div class="logo-text">
+          <h1>Gemini AI</h1>
+          <span class="status">Online & Ready</span>
+        </div>
+      </div>
+      <button id="clear-btn" title="Clear Conversation">
+        <i data-lucide="trash-2"></i>
+      </button>
+    </header>
+
+    <main id="chat-box" class="chat-box">
+      <!-- Welcome Message -->
+      <div class="welcome-screen">
+        <div class="welcome-icon">
+          <i data-lucide="sparkles"></i>
+        </div>
+        <h2>Halo! Ada yang bisa saya bantu hari ini?</h2>
+        <p>Tanyakan apa saja, mulai dari bantuan coding hingga ide kreatif.</p>
+      </div>
+    </main>
+
+    <footer>
+      <form id="chat-form">
+        <div class="input-wrapper">
+          <input type="text" id="user-input" placeholder="Ketik pesan Anda di sini..." autocomplete="off" required />
+          <button type="submit" id="send-btn">
+            <i data-lucide="send"></i>
+          </button>
+        </div>
+      </form>
+    </footer>
   </div>
+
   <script src="script.js"></script>
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+  </script>
 </body>
 
 </html>
