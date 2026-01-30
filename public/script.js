@@ -1,71 +1,114 @@
+// DOM elements
 const form = document.getElementById('chat-form');
 const input = document.getElementById('user-input');
 const chatBox = document.getElementById('chat-box');
 
-// API endpoint (akan otomatis ke localhost:3000 saat development)
-const API_URL = 'http://localhost:3000/api/chat';
+// Conversation history storage
+let conversationHistory = [];
 
+// API endpoint
+const API_URL = '/api/chat';
+
+// Form submit handler
 form.addEventListener('submit', async function (e) {
   e.preventDefault();
 
   const userMessage = input.value.trim();
   if (!userMessage) return;
 
-  // Tampilkan pesan user
-  appendMessage('user', userMessage);
-  input.value = '';
+  // Add user message to conversation history
+  conversationHistory.push({
+    role: 'user',
+    text: userMessage
+  });
 
-  // Disable input saat menunggu response
+  // Display user message in chat box
+  appendMessage('user', userMessage);
+
+  // Clear input and disable it
+  input.value = '';
   input.disabled = true;
 
-  // Tampilkan loading indicator
-  const loadingMsg = appendMessage('bot', '💭 Gemini is thinking...');
+  // Show "Thinking..." bot message
+  const thinkingMsg = appendMessage('bot', 'Thinking...');
 
   try {
-    // Kirim request ke backend
+    // Send POST request to backend with conversation history
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        message: userMessage
+        conversation: conversationHistory
       })
     });
 
-    // Hapus loading message
-    loadingMsg.remove();
+    // Remove "Thinking..." message
+    thinkingMsg.remove();
 
+    // Check if response is OK
     if (!response.ok) {
       throw new Error(`Server error: ${response.status}`);
     }
 
     const data = await response.json();
 
-    if (data.success) {
-      // Tampilkan response dari Gemini
-      appendMessage('bot', data.response);
+    // Check if result exists
+    if (data.result) {
+      // Add bot response to conversation history
+      conversationHistory.push({
+        role: 'model',
+        text: data.result
+      });
+
+      // Display bot response
+      appendMessage('bot', data.result);
     } else {
-      throw new Error(data.error || 'Unknown error');
+      // No result received
+      appendMessage('bot', 'Sorry, no response received.');
     }
 
   } catch (error) {
-    // Hapus loading message jika error
-    loadingMsg.remove();
-    appendMessage('bot', `❌ Error: ${error.message}. Please make sure the server is running.`);
+    // Remove "Thinking..." message if still present
+    if (thinkingMsg.parentNode) {
+      thinkingMsg.remove();
+    }
+
+    // Show error message
+    appendMessage('bot', 'Failed to get response from server.');
     console.error('Error:', error);
   } finally {
-    // Re-enable input
+    // Re-enable input and focus
     input.disabled = false;
     input.focus();
   }
 });
 
+/**
+ * Append a message to the chat box
+ * @param {string} sender - 'user' or 'bot'
+ * @param {string} text - Message text
+ * @returns {HTMLElement} The created message element
+ */
 function appendMessage(sender, text) {
   const msg = document.createElement('div');
   msg.classList.add('message', sender);
   msg.textContent = text;
   chatBox.appendChild(msg);
+
+  // Auto-scroll to bottom
   chatBox.scrollTop = chatBox.scrollHeight;
-  return msg; // Return element untuk bisa di-remove jika perlu
+
+  return msg;
 }
+
+// Optional: Clear conversation history function
+function clearConversation() {
+  conversationHistory = [];
+  chatBox.innerHTML = '';
+}
+
+// Optional: Export conversation for debugging
+window.getConversation = () => conversationHistory;
+window.clearConversation = clearConversation;

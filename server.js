@@ -1,66 +1,65 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Inisialisasi Express
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Inisialisasi Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const GEMINI_MODEL = 'gemini-2.5-flash';
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public')); // Serve static files dari folder public
 
-// Endpoint untuk chat
+// Endpoint untuk chat dengan conversation history
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message } = req.body;
+        const { conversation } = req.body;
 
-        if (!message) {
+        // Validasi input
+        if (!Array.isArray(conversation)) {
             return res.status(400).json({
-                success: false,
-                error: 'Message is required'
+                error: 'Message must be an array'
             });
         }
 
-        console.log('📨 User message:', message);
+        // Transform conversation ke format Gemini
+        const contents = conversation.map(({ role, text }) => ({
+            role: role === 'user' ? 'user' : 'model',
+            parts: [{ text }]
+        }));
 
-        // Call Gemini API menggunakan REST API langsung
-        const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`;
+        console.log('📨 Conversation:', JSON.stringify(contents, null, 2));
 
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: message }]
-                }]
-            })
+        // Generate response dari Gemini dengan conversation history
+        const model = genAI.getGenerativeModel({
+            model: GEMINI_MODEL,
+            systemInstruction: 'Jawab hanya menggunakan bahasa Indonesia.'
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`API Error: ${response.status} - ${JSON.stringify(errorData)}`);
-        }
+        const result = await model.generateContent({
+            contents,
+            generationConfig: {
+                temperature: 0.9,
+            }
+        });
 
-        const data = await response.json();
-        const text = data.candidates[0].content.parts[0].text;
+        const response = result.response;
+        const text = response.text();
 
         console.log('🤖 Gemini response:', text);
 
-        res.json({
-            success: true,
-            response: text
-        });
+        res.status(200).json({ result: text });
 
     } catch (error) {
         console.error('❌ Error:', error.message);
         res.status(500).json({
-            success: false,
-            error: 'Failed to generate response from Gemini AI',
-            details: error.message
+            error: error.message
         });
     }
 });
@@ -70,6 +69,7 @@ app.get('/api/health', (req, res) => {
     res.json({
         status: 'OK',
         message: 'Gemini AI Chatbot Server is running',
+        model: GEMINI_MODEL,
         timestamp: new Date().toISOString()
     });
 });
@@ -78,5 +78,6 @@ app.get('/api/health', (req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`📡 API endpoint: http://localhost:${PORT}/api/chat`);
+    console.log(`🤖 Using model: ${GEMINI_MODEL}`);
     console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
 });
