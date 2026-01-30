@@ -38,15 +38,17 @@ h1 {
 }
 
 .message.user {
-  background-color: #d1e7ff;
+  background-color: #fff3cd;
   float: right;
   text-align: right;
+  color: #664d03;
 }
 
 .message.bot {
-  background-color: #dff6dd;
+  background-color: #cfe2ff;
   float: left;
   text-align: left;
+  color: #084298;
 }
 
 form {
