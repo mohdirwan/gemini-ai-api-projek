@@ -1,12 +1,11 @@
 # API Keys dan file konfigurasi sensitif
+.env
+.env.local
 public/config.js
 
 # Node modules
 node_modules/
-
-# Environment files
-.env
-.env.local
+package-lock.json
 
 # IDE
 .vscode/
@@ -15,3 +14,7 @@ node_modules/
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

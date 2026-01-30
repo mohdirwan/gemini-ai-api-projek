@@ -1,0 +1,29 @@
+{
+  "name": "gemini-ai-api-projek",
+  "version": "1.0.0",
+  "description": "Aplikasi chatbot sederhana yang menggunakan Google Gemini AI API untuk memberikan respons cerdas terhadap pertanyaan pengguna.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohdirwan/gemini-ai-api-projek.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mohdirwan/gemini-ai-api-projek/issues"
+  },
+  "homepage": "https://github.com/mohdirwan/gemini-ai-api-projek#readme",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
+  }
+}
