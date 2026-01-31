@@ -105,6 +105,13 @@ form.addEventListener('submit', async function (e) {
  * Append a regular message
  */
 function appendMessage(sender, text) {
+  const row = document.createElement('div');
+  row.classList.add('message-row', sender);
+
+  const avatar = document.createElement('div');
+  avatar.classList.add('avatar');
+  avatar.innerHTML = `<img src="${sender === 'bot' ? 'avatar-bot.png' : 'avatar-user.png'}" alt="${sender}">`;
+
   const msg = document.createElement('div');
   msg.classList.add('message', sender);
 
@@ -129,15 +136,25 @@ function appendMessage(sender, text) {
     msg.innerText = text;
   }
 
-  chatBox.appendChild(msg);
+  row.appendChild(avatar);
+  row.appendChild(msg);
+  chatBox.appendChild(row);
+
   scrollToBottom();
-  return msg;
+  return row;
 }
 
 /**
  * Create a typing indicator element
  */
 function appendTypingIndicator() {
+  const row = document.createElement('div');
+  row.classList.add('message-row', 'bot');
+
+  const avatar = document.createElement('div');
+  avatar.classList.add('avatar');
+  avatar.innerHTML = `<img src="avatar-bot.png" alt="bot">`;
+
   const indicator = document.createElement('div');
   indicator.classList.add('message', 'bot', 'typing');
   indicator.innerHTML = `
@@ -145,9 +162,13 @@ function appendTypingIndicator() {
     <div class="dot"></div>
     <div class="dot"></div>
   `;
-  chatBox.appendChild(indicator);
+
+  row.appendChild(avatar);
+  row.appendChild(indicator);
+  chatBox.appendChild(row);
+
   scrollToBottom();
-  return indicator;
+  return row;
 }
 
 /**

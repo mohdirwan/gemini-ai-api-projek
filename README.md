@@ -1,4 +1,4 @@
-# 🤖 Gemini AI Chatbot
+# 🤖 Tanya Softdev bareng Gemini AI Chatbot
 
 Aplikasi chatbot web-based yang menggunakan **Google Gemini AI API** untuk memberikan respons cerdas terhadap pertanyaan pengguna secara real-time.
 
